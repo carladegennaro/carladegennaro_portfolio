@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Portfolio Carla De Gennaro</title>
+
+  <style>
+    body {
+        background-image: url(Untitled-1-03.jpg);
+      margin: 0;
+      background-color: rgb(0, 0, 0);
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    div {
+      color: rgb(255, 255, 255);
+    }
+
+    /* stile comune */
+    .fixed-text {
+      position: fixed;
+      color: rgb(255, 255, 255);
+      font-size: 14px;
+      font-weight: lighter;
+      text-decoration: none;
+      cursor: pointer;
+    }
+
+    /* posizioni */
+    .top-left {
+      top: 1rem;
+      left: 1rem;
+    }
+
+    .top-right {
+      top: 1rem;
+      right: 1rem;
+    }
+
+    .bottom-left {
+      bottom: 1rem;
+      left: 1rem;
+    }
+
+    /* testo ABOUT nascosto */
+    .about-text {
+      margin-top: 0.5rem;
+      opacity: 0;
+      transition: opacity 0.6s ease;
+      pointer-events: none;
+    }
+
+    .about-text.show {
+      opacity: 1;
+    }
+
+    /* numeri sotto il nome */
+    .numbers {
+      margin-top: 0.5rem;  /* distanza dal nome */
+      line-height: 1.5;    /* distanza tra i numeri */
+    }
+
+    .numbers div {
+      font-size: 14px;
+      color: rgb(255, 255, 255);
+    }
+
+  </style>
+</head>
+
+<body>
+
+  <!-- CARLA + NUMERI + TESTO ABOUT -->
+  <div class="fixed-text top-left">
+    CARLA DE GENNARO
+   
+    <div id="aboutText" class="about-text">
+      Sono una studentessa al secondo anno di comunicazione visiva alla supsi di Mendrisio. <br>
+      Mi piace il design sotto in le sue forme, ma in questo periodo mi interesso particolarmente al mondo digitale. <br>
+      In questa pagina si trovano cdegli esercizi svolti durante il seminario di codice di Andreas Gysin.
+    </div>
+  </div>
+
+  <!-- ABOUT -->
+  <div class="fixed-text top-right" id="aboutBtn">
+    ABOUT
+  </div>
+
+  <!-- INSTAGRAM -->
+  <a
+    href="https://www.instagram.com/carla.degennaro/"
+    target="_blank"
+    class="fixed-text bottom-left"
+  >
+    INSTAGRAM <br>
+    carladegennaro4@gmail.com
+  </a>
+
+  <!-- JS -->
+  <script>
+    const aboutBtn = document.getElementById("aboutBtn");
+    const aboutText = document.getElementById("aboutText");
+
+    aboutBtn.addEventListener("click", () => {
+      aboutText.classList.toggle("show");
+    });
+  </script>
+
+</body>
+</html>
+
