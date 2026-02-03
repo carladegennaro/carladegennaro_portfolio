@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Esercizio 1</title>
+</head>
+<body>
+    
+<script src="https://cdn.jsdelivr.net/npm/p5@2.2.0/lib/p5.min.js"></script>
+<script>
+function setup(){
+    createCanvas(400, 400);
+    background(200);
+}
+
+function draw(){
+
+    if (frameCount %2 ==0){
+        fill (0)
+    } else {
+        fill(255)
+    }
+
+    ellipse(mouseX,mouseY,50,50)
+    ellipse(mouseX,mouseY,30,30)
+    noStroke()
+}
+
+</script>
+
+
+
+</body>
+</html>
