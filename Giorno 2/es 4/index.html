@@ -1,40 +1,44 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Esercizio 1</title>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Document</title>
+	<style>
+		body {
+			background-color: gray;
+		}
+	</style>
 </head>
 <body>
+	<script src="https://cdn.jsdelivr.net/npm/p5@1.11.11/lib/p5.min.js"></script>
+	<script>
+
+		let shape
+
+		function preload() {
+			shape = loadModel('Scaniverse_2026_02_03120428.obj', true)
+        
+        
     
-<script src="https://cdn.jsdelivr.net/npm/p5@2.2.0/lib/p5.min.js"></script>
-<script>
-function setup(){
-    createCanvas(400, 400);
-}
+		}
 
-function draw(){
+		function setup() {
+			// creiamo un elemento canvas
+			createCanvas(500, 500, WEBGL) 
+			describe("un modello 3d di una faccia")
+		}
 
-    background(0)
-    noStroke()
-   
-    for (let j=0; j<25; j++){
-        for(let i=0; i<25; i++) {
-            fill(i * 10, j * 10, 255-i*10)
-            let px=110+i*13
-            let py=110+i*13
-            circle(px,py,6)
+		function draw(){
+			// sfondo nero
+			background(200)
+			noStroke()
 
-        }
-    }
+			orbitControl()
+            scale(2.5)
+            model(shape)
 
-
-    
-}
-
-</script>
-
-
-
+		}
+	</script>
 </body>
 </html>
