@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Esercizio 1</title>
+</head>
+<body>
+    
+<script src="https://cdn.jsdelivr.net/npm/p5@2.2.0/lib/p5.min.js"></script>
+<script>
+function setup(){
+    createCanvas(400, 400);
+}
+
+function draw(){
+
+    background(0)
+    noStroke()
+   
+    for (let j=0; j<25; j++){
+        for(let i=0; i<25; i++) {
+            fill(i * 10, j * 10, 255-i*10)
+            let px=110+i*13
+            let py=110+i*13
+            circle(px,py,6)
+
+        }
+    }
+
+
+    
+}
+
+</script>
+
+
+
+</body>
+</html>
