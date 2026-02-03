@@ -14,31 +14,28 @@
 	<script src="https://cdn.jsdelivr.net/npm/p5@1.11.11/lib/p5.min.js"></script>
 	<script>
 
-		let shape
-
+		let shape;
 		function preload() {
-			shape = loadModel('Scaniverse_2026_02_03120428.obj', true)
-        
-        
-    
+			shape = loadModel('/ag/ag.obj', true)
 		}
 
 		function setup() {
-			// creiamo un elemento canvas
-			createCanvas(500, 500, WEBGL) 
-			describe("un modello 3d di una faccia")
+			createCanvas(800, 600, WEBGL);
 		}
 
-		function draw(){
-			// sfondo nero
-			background(200)
-			noStroke()
-
+		function draw() {
+			background(0)
 			orbitControl()
-            scale(2.5)
-            model(shape)
 
+			noStroke()
+			fill(120)
+
+
+			model(shape)
+			directionalLight(255, 0, 0, 1, 1, 0);
 		}
+
+
 	</script>
 </body>
 </html>
