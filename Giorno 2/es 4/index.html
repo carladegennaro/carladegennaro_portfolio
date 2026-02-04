@@ -14,28 +14,51 @@
 	<script src="https://cdn.jsdelivr.net/npm/p5@1.11.11/lib/p5.min.js"></script>
 	<script>
 
-		let shape;
+		let faccione
+
 		function preload() {
-			shape = loadModel('/ag/ag.obj', true)
+			faccione = loadImage('IMG_4119.png')
 		}
 
 		function setup() {
-			createCanvas(800, 600, WEBGL);
+			// creiamo un elemento canvas
+			createCanvas(800, 600)
+			faccione.resize(faccione.width / 7, faccione.height / 7)
 		}
 
-		function draw() {
+		function draw(){
+			// sfondo nero
 			background(0)
-			orbitControl()
-
 			noStroke()
-			fill(120)
 
+			let numH = faccione.width
+			let numV = faccione.height
+			let d = 8
+			let ox = (width - (numH - 1) * d) / 2
+			let oy = (height - (numV - 1) * d) / 2
 
-			model(shape)
-			directionalLight(255, 0, 0, 1, 1, 0);
+			let amount = mouseX * 0.3
+
+			let ny = frameCount * 0.03
+			let nx = frameCount * 0.014
+			let nz = frameCount * 0.1
+
+			for (let j=0; j<numV; j++) {
+				for(let i=0; i<numH; i++) {
+					let col = faccione.get(i, j)
+					let al = alpha(col)
+					if (al < 250) continue
+					let br = brightness(col)
+					fill(255)
+					let px = ox + i * d + map(noise( i * 0.02 + nx, j * 0.02 + ny, nz), 0, 1, -amount, amount)
+					let py = oy + j * d + map(noise( i * 0.02 + nx, j * 0.02 + ny, nz + 5), 0, 1, -amount, amount)
+					circle(px, py, br * 0.1)
+				}
+			}
+
+			image(faccione, 0, 0)
+
 		}
-
-
 	</script>
 </body>
 </html>
