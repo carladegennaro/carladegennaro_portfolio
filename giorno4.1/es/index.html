@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <title>Stelle Spinate Rotanti - Analisi Chat</title>
+    <style>
+        body, html {
+            margin: 0; padding: 0; width: 100%; height: 100%;
+            overflow: hidden; background: #000; /* SFONDO NERO */
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+        }
+
+        #sky {
+            position: relative; width: 100vw; height: 100vh;
+            background: #000; /* SFONDO NERO */
+        }
+
+        .constellation {
+            position: absolute; cursor: grab; z-index: 10;
+            display: flex; flex-direction: column; align-items: center;
+            transform: translate(-50%, -50%);
+        }
+
+        .constellation:active { cursor: grabbing; }
+
+        /* ROTAZIONE DELLE STELLE */
+        .star-svg {
+            filter: drop-shadow(0 0 10px rgba(255, 214, 10, 0.8));
+            animation: rotateStar 20s linear infinite; /* GIRANO SU LORO STESSE */
+            transform-origin: center;
+        }
+
+        @keyframes rotateStar {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .word-svg {
+            pointer-events: none; opacity: 0;
+            transition: opacity 0.4s ease, transform 0.4s ease;
+            position: absolute; top: -110px;
+        }
+
+        .constellation:hover .word-svg { opacity: 1; transform: translateY(-10px); }
+
+        .dotted-text {
+            fill: none;
+            stroke: #fff;
+            stroke-width: 1.2;
+            stroke-dasharray: 2 4;
+            font-size: 55px;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 4px;
+        }
+
+        .details {
+            font-size: 13px; color: #fff;
+            background: rgba(0, 0, 0, 0.9);
+            padding: 10px 15px; border-radius: 12px;
+            border: 1px solid rgba(255, 214, 10, 0.4);
+            margin-top: 10px; white-space: nowrap;
+            pointer-events: none; opacity: 0;
+            transition: opacity 0.4s ease;
+            backdrop-filter: blur(6px);
+            text-align: center;
+        }
+
+        .constellation:hover .details { opacity: 1; }
+        .details b { color: #ffd60a; font-size: 16px; display: block; margin-bottom: 2px; }
+
+        .bg-star {
+            position: absolute; background: white; border-radius: 50%; opacity: 0.3;
+        }
+    </style>
+</head>
+<body>
+
+<div id="sky"></div>
+
+<script>
+    const data = [
+        { word: 'Amore', total: 37175, breakdown: "Eti: 36.992 | Altre: <100" },
+        { word: 'Bene', total: 25072, breakdown: "Eti: 14.950 | Anna: 6.053 | Nicole: 3.316" },
+        { word: 'Amo', total: 10744, breakdown: "Eti: 10.528 | Altre: <100" },
+        { word: 'Cosa', total: 10547, breakdown: "Eti: 7.846 | Anna: 1.910 | Nicole: 585" },
+        { word: 'Buona', total: 8110, breakdown: "Eti: 5.708 | Anna: 1.427 | Nicole: 716" }
+    ];
+
+    const sky = document.getElementById('sky');
+
+    function createStarPath(points, outerRadius, innerRadius) {
+        let path = "";
+        const angleStep = Math.PI / points;
+        for (let i = 0; i < 2 * points; i++) {
+            const r = (i % 2 === 0) ? outerRadius : innerRadius;
+            const currAngle = i * angleStep - Math.PI / 2;
+            const x = 100 + r * Math.cos(currAngle);
+            const y = 100 + r * Math.sin(currAngle);
+            path += (i === 0 ? "M" : "L") + x + "," + y;
+        }
+        return path + "Z";
+    }
+
+    for (let i = 0; i < 150; i++) {
+        const s = document.createElement('div');
+        s.className = 'bg-star';
+        const size = Math.random() * 2;
+        s.style.width = s.style.height = size + 'px';
+        s.style.left = Math.random() * 100 + '%';
+        s.style.top = Math.random() * 100 + '%';
+        sky.appendChild(s);
+    }
+
+    data.forEach((item, i) => {
+        const container = document.createElement('div');
+        container.className = 'constellation';
+        container.style.left = (15 + (Math.random() * 70)) + '%';
+        container.style.top = (25 + (Math.random() * 55)) + '%';
+
+        const scaleFactor = item.total / 37175;
+        const outerR = 30 + (60 * scaleFactor);
+        const innerR = outerR * 0.25;
+
+        const svgNS = "http://www.w3.org/2000/svg";
+        
+        const starSvg = document.createElementNS(svgNS, "svg");
+        starSvg.setAttribute("width", "200");
+        starSvg.setAttribute("height", "200");
+        starSvg.setAttribute("class", "star-svg");
+        starSvg.style.animationDuration = (15 + Math.random() * 10) + 's'; // Velocità variabili
+        
+        const starPath = document.createElementNS(svgNS, "path");
+        starPath.setAttribute("d", createStarPath(24, outerR, innerR));
+        starPath.setAttribute("fill", "#ffd60a");
+        starPath.setAttribute("stroke", "#fff");
+        starPath.setAttribute("stroke-width", "1");
+        starSvg.appendChild(starPath);
+
+        const wordSvg = document.createElementNS(svgNS, "svg");
+        wordSvg.setAttribute("width", "400");
+        wordSvg.setAttribute("height", "100");
+        wordSvg.setAttribute("class", "word-svg");
+
+        const text = document.createElementNS(svgNS, "text");
+        text.setAttribute("x", "50%");
+        text.setAttribute("y", "50%");
+        text.setAttribute("text-anchor", "middle");
+        text.setAttribute("dominant-baseline", "middle");
+        text.setAttribute("class", "dotted-text");
+        text.textContent = item.word;
+        wordSvg.appendChild(text);
+
+        container.appendChild(wordSvg);
+        container.appendChild(starSvg);
+        
+        const detailDiv = document.createElement('div');
+        detailDiv.className = 'details';
+        detailDiv.innerHTML = `<b>${item.word.toUpperCase()}</b>Totale: ${item.total.toLocaleString()}<br><small>${item.breakdown}</small>`;
+        container.appendChild(detailDiv);
+
+        sky.appendChild(container);
+        makeDraggable(container);
+    });
+
+    function makeDraggable(el) {
+        let isDragging = false;
+        let startX, startY, initialLeft, initialTop;
+
+        el.addEventListener('mousedown', (e) => {
+            isDragging = true;
+            startX = e.clientX;
+            startY = e.clientY;
+            initialLeft = el.offsetLeft;
+            initialTop = el.offsetTop;
+            el.style.zIndex = 1000;
+        });
+
+        document.addEventListener('mousemove', (e) => {
+            if (!isDragging) return;
+            const dx = e.clientX - startX;
+            const dy = e.clientY - startY;
+            el.style.left = (initialLeft + dx) + 'px';
+            el.style.top = (initialTop + dy) + 'px';
+        });
+
+        document.addEventListener('mouseup', () => {
+            isDragging = false;
+            el.style.zIndex = 10;
+        });
+    }
+</script>
+
+</body>
+</html>
