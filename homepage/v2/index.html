@@ -36,16 +36,16 @@
             position: fixed; 
             top: 0; left: 0; width: 100%; height: 100vh; z-index: 1; pointer-events: none; 
             will-change: filter, opacity;
-            transition: opacity 0.2s ease-out; /* Transizione fluida per la sparizione */
+            transition: opacity 0.2s ease-out;
         }
 
-        /* --- GALLERY GRID --- */
+        /* --- GALLERY GRID (5 COLONNE) --- */
         #gallery-section { 
             position: relative; 
             margin-top: 50vh; 
             display: grid;
-            grid-template-columns: repeat(12, 1fr); 
-            gap: 20px;
+            grid-template-columns: repeat(5, 1fr); 
+            gap: 80px 20px;
             width: 100%; 
             padding: 0 25px 100px 25px;
             z-index: 10;
@@ -54,32 +54,33 @@
         .product-item {
             display: flex;
             flex-direction: column;
+            align-items: center; /* Centra l'immagine più piccola nel box */
             width: 100%;
         }
 
         .img-box {
-            width: 100%;
+            width: 70%; /* Dimensione ridotta delle immagini */
             aspect-ratio: 3/4; 
             background: black;
             margin-bottom: 10px;
+            overflow: hidden;
+        }
+
+        .img-box img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
         }
         
         .product-footer {
             display: flex;
             justify-content: space-between;
+            width: 70%; /* Allineato alla larghezza dell'immagine */
             font-size: 10px;
             font-weight: 500;
-            opacity: 0.5;
+            opacity: 1; /* Testo non sbiadito/colorato */
+            color: var(--text-color);
         }
-
-        .item-1 { grid-column: 1 / span 2; }
-        .item-2 { grid-column: 5 / span 2; margin-top: 50px; }
-        .item-3 { grid-column: 10 / span 2; }
-        .item-4 { grid-column: 3 / span 2; margin-top: -30px; }
-        .item-5 { grid-column: 8 / span 2; margin-top: 40px; }
-        .item-6 { grid-column: 2 / span 2; }
-        .item-7 { grid-column: 6 / span 2; margin-top: -60px; }
-        .item-8 { grid-column: 11 / span 2; margin-top: 20px; }
 
         /* --- OVERLAYS --- */
         .overlay {
@@ -113,14 +114,45 @@
     <div id="canvas-container"></div>
 
     <section id="gallery-section">
-        <article class="product-item item-1"><div class="img-box"></div><div class="product-footer"><span>(01)</span><span>Faccia 3D</span></div></article>
-        <article class="product-item item-2"><div class="img-box"></div><div class="product-footer"><span>(02)</span><span>TBD Project</span></div></article>
-        <article class="product-item item-3"><div class="img-box"></div><div class="product-footer"><span>(03)</span><span>Visual Archive</span></div></article>
-        <article class="product-item item-4"><div class="img-box"></div><div class="product-footer"><span>(04)</span><span>Code Experiment</span></div></article>
-        <article class="product-item item-5"><div class="img-box"></div><div class="product-footer"><span>(05)</span><span>New Work</span></div></article>
-        <article class="product-item item-6"><div class="img-box"></div><div class="product-footer"><span>(06)</span><span>Editorial</span></div></article>
-        <article class="product-item item-7"><div class="img-box"></div><div class="product-footer"><span>(07)</span><span>Abstract</span></div></article>
-        <article class="product-item item-8"><div class="img-box"></div><div class="product-footer"><span>(08)</span><span>Motion</span></div></article>
+        <a href="https://carladegennaro.github.io/carladegennaro_portfolio/Giorno_2/es5/index.html" target="_blank" class="product-item" style="grid-column: 1;">
+            <div class="img-box"><img src="anteprima1.jpg" alt="" onerror="this.style.display='none'"></div>
+            <div class="product-footer"><span>(01)</span><span>Giorno 2 - Es 5</span></div>
+        </a>
+
+        <a href="https://carladegennaro.github.io/carladegennaro_portfolio/Giorno%203/es%203/index.html" target="_blank" class="product-item" style="grid-column: 3;">
+            <div class="img-box"><img src="anteprima2.jpg" alt="" onerror="this.style.display='none'"></div>
+            <div class="product-footer"><span>(02)</span><span>Giorno 3 - Es 3</span></div>
+        </a>
+
+        <a href="http://127.0.0.1:5503/index.html" target="_blank" class="product-item" style="grid-column: 5;">
+            <div class="img-box"><img src="anteprima3.jpg" alt="" onerror="this.style.display='none'"></div>
+            <div class="product-footer"><span>(03)</span><span>Local Project</span></div>
+        </a>
+
+        <article class="product-item" style="grid-column: 2;">
+            <div class="img-box"></div>
+            <div class="product-footer"><span>(04)</span><span>TBD</span></div>
+        </article>
+
+        <article class="product-item" style="grid-column: 4;">
+            <div class="img-box"></div>
+            <div class="product-footer"><span>(05)</span><span>TBD</span></div>
+        </article>
+
+        <article class="product-item" style="grid-column: 1;">
+            <div class="img-box"></div>
+            <div class="product-footer"><span>(06)</span><span>TBD</span></div>
+        </article>
+
+        <article class="product-item" style="grid-column: 3;">
+            <div class="img-box"></div>
+            <div class="product-footer"><span>(07)</span><span>TBD</span></div>
+        </article>
+
+        <article class="product-item" style="grid-column: 5;">
+            <div class="img-box"></div>
+            <div class="product-footer"><span>(08)</span><span>TBD</span></div>
+        </article>
     </section>
 
     <div id="aboutOverlay" class="overlay">
@@ -155,16 +187,10 @@
             cursor.style.top = e.clientY + 'px';
         });
 
-        // --- BLUR E SPARIZIONE ALLO SCROLL ---
         window.addEventListener('scroll', () => {
             let scrollY = window.scrollY;
-            
-            // Gestione Blur
             let blurValue = Math.min(scrollY / 15, 25); 
             canvasContainer.style.filter = `blur(${blurValue}px)`;
-
-            // Gestione Sparizione (Opacity)
-            // L'opacità va da 1 a 0 entro i primi 300px di scroll
             let opacityValue = 1 - Math.min(scrollY / 300, 1);
             canvasContainer.style.opacity = opacityValue;
         });
@@ -211,8 +237,6 @@
             clear();
             let centerText = createVector(width / 2, height / 4);
             let mousePos = createVector(mouseX, mouseY);
-            
-            // Logica assemble
             let assemble = (mouseY > height / 2) || (window.scrollY > 50) || (mousePos.dist(centerText) < threshold);
             if (mouseY > height / 2 || window.scrollY > 50) mousePos = centerText;
 
@@ -250,9 +274,7 @@
                 this.acc.mult(0);
                 this.vel.limit(assemble ? 18 : 3);
             }
-            show() {
-                fill(0); noStroke(); ellipse(this.pos.x, this.pos.y, this.size);
-            }
+            show() { fill(0); noStroke(); ellipse(this.pos.x, this.pos.y, this.size); }
         }
 
         function setupOverlay(btnId, overlayId, otherId) {
