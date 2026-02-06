@@ -36,7 +36,7 @@
             position: fixed; 
             top: 0; left: 0; width: 100%; height: 100vh; z-index: 1; pointer-events: none; 
             will-change: filter, opacity;
-            transition: opacity 0.2s ease-out;
+            transition: opacity 0.4s ease-in-out, filter 0.2s ease-out;
         }
 
         #gallery-section { 
@@ -60,7 +60,7 @@
         .img-box {
             width: 70%; 
             aspect-ratio: 3/4; 
-            background: #f0f0f0; /* Grigio chiaro di fallback */
+            background: #f0f0f0; 
             margin-bottom: 10px;
             overflow: hidden;
         }
@@ -69,6 +69,12 @@
             width: 100%;
             height: 100%;
             object-fit: cover;
+            transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        /* Effetto ingrandimento immagine */
+        .product-item:hover .img-box img {
+            transform: scale(1.1);
         }
         
         .product-footer {
@@ -132,7 +138,7 @@
             <div class="product-footer"><span>(04)</span><span>type</span></div>
         </a>
         
-        <a href="https://carladegennaro.github.io/carladegennaro_portfolio/giorno_4.1/es/index.html" target="_blank" class="product-item" style="grid-column: 4;">
+        <a href="https://carladegennaro.github.io/carladegennaro_portfolio/giorno4.1/es/index.html" target="_blank" class="product-item" style="grid-column: 4;">
             <div class="img-box"><img src="Screenshot 2026-02-05 alle 15.27.48.png" alt="Progetto 5"></div>
             <div class="product-footer"><span>(05)</span><span>archive</span></div>
         </a>
@@ -170,8 +176,25 @@
             cursor.style.top = e.clientY + 'px';
         });
 
-        const clickables = document.querySelectorAll('a, button, .product-item');
-        clickables.forEach(el => {
+        const projects = document.querySelectorAll('.product-item');
+        projects.forEach(el => {
+            el.addEventListener('mouseenter', () => {
+                cursor.classList.add('grow');
+                // Dissolvenza animazione p5 quando si passa sopra un'immagine
+                canvasContainer.style.opacity = '0';
+            });
+            el.addEventListener('mouseleave', () => {
+                cursor.classList.remove('grow');
+                // Ripristina animazione (se non si è scrollato troppo)
+                if(window.scrollY < 300) {
+                    canvasContainer.style.opacity = 1 - Math.min(window.scrollY / 300, 1);
+                }
+            });
+        });
+
+        // Gestione altri elementi cliccabili
+        const buttons = document.querySelectorAll('button, header .nav-link');
+        buttons.forEach(el => {
             el.addEventListener('mouseenter', () => cursor.classList.add('grow'));
             el.addEventListener('mouseleave', () => cursor.classList.remove('grow'));
         });
@@ -180,8 +203,13 @@
             let scrollY = window.scrollY;
             let blurValue = Math.min(scrollY / 15, 25); 
             canvasContainer.style.filter = `blur(${blurValue}px)`;
-            let opacityValue = 1 - Math.min(scrollY / 300, 1);
-            canvasContainer.style.opacity = opacityValue;
+            
+            // L'opacità cambia solo se non siamo sopra un'immagine
+            const isHovering = document.querySelector('.product-item:hover');
+            if (!isHovering) {
+                let opacityValue = 1 - Math.min(scrollY / 300, 1);
+                canvasContainer.style.opacity = opacityValue;
+            }
         });
 
         let particles = [];
