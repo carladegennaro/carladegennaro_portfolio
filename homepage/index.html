@@ -3,8 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Carla De Gennaro</title>
+    <title>Carla De Gennaro | Playing with code</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.js"></script>
     <style>
         :root {
             --bg-color: #ffffff;
@@ -12,73 +13,94 @@
             --ui-font: 11px;
         }
 
-        html, body { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; overscroll-behavior: none; background: var(--bg-color); }
-        * { box-sizing: border-box; cursor: none !important; text-decoration: none !important; outline: none; -webkit-font-smoothing: antialiased; }
-        body { font-family: 'Inter', sans-serif; color: var(--text-color); text-transform: uppercase; }
+        html, body { margin: 0; padding: 0; width: 100%; height: 100%; overflow-x: hidden; background: var(--bg-color); font-family: 'Inter', sans-serif; text-transform: uppercase; color: var(--text-color); }
+        * { box-sizing: border-box; cursor: none !important; text-decoration: none !important; }
 
-        /* --- CURSORE --- */
         #custom-cursor {
             position: fixed; width: 10px; height: 10px; background-color: white; border-radius: 50%;
             pointer-events: none; z-index: 9999; mix-blend-mode: difference; transform: translate(-50%, -50%);
             transition: width 0.2s, height 0.2s;
         }
+        
+        #custom-cursor.grow { width: 50px; height: 50px; }
 
-        /* --- NAVIGATION --- */
-        header, footer { position: fixed; width: calc(100% - 50px); z-index: 210; font-size: var(--ui-font); font-weight: 500; }
-        header { top: 25px; left: 25px; display: flex; justify-content: space-between; }
-        footer { bottom: 25px; right: 25px; width: auto; }
-        .nav-link { background: none; border: none; text-transform: uppercase; font-family: inherit; font-size: inherit; color: var(--text-color); }
+        header { 
+            position: fixed; top: 25px; left: 0; width: 100%; padding: 0 25px; 
+            z-index: 3000; 
+            display: flex; justify-content: space-between; font-size: var(--ui-font); font-weight: 500; 
+        }
+        .nav-group { display: flex; gap: 30px; }
+        .nav-link { background: none; border: none; text-transform: uppercase; font-family: inherit; font-size: inherit; color: var(--text-color); padding: 0; cursor: none; }
 
-        /* --- OVERLAYS (ABOUT & CONTACT) --- */
+        #canvas-container { 
+            position: fixed; 
+            top: 0; left: 0; width: 100%; height: 100vh; z-index: 1; pointer-events: none; 
+            will-change: filter, opacity;
+            transition: opacity 0.4s ease-in-out, filter 0.2s ease-out;
+        }
+
+        #gallery-section { 
+            position: relative; 
+            margin-top: 50vh; 
+            display: grid;
+            grid-template-columns: repeat(5, 1fr); 
+            gap: 80px 20px;
+            width: 100%; 
+            padding: 0 25px 100px 25px;
+            z-index: 10;
+        }
+
+        .product-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center; 
+            width: 100%;
+        }
+
+        .img-box {
+            width: 70%; 
+            aspect-ratio: 3/4; 
+            background: #f0f0f0; 
+            margin-bottom: 10px;
+            overflow: hidden;
+        }
+
+        .img-box img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        /* Effetto ingrandimento immagine */
+        .product-item:hover .img-box img {
+            transform: scale(1.1);
+        }
+        
+        .product-footer {
+            display: flex;
+            justify-content: space-between;
+            width: 70%; 
+            font-size: 10px;
+            font-weight: 500;
+            opacity: 1; 
+            color: var(--text-color);
+        }
+
         .overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(255, 255, 255, 0.98);
-            z-index: 150; display: flex; align-items: center; padding: 0 10%; opacity: 0; pointer-events: none; transition: opacity 0.3s ease;
+            z-index: 2000; display: flex; align-items: center; padding: 0 10%; opacity: 0; pointer-events: none; transition: opacity 0.3s ease;
         }
         .overlay.active { opacity: 1; pointer-events: all; }
-        .overlay-content { width: 100%; max-width: 600px; } /* Leggermente più largo */
-        
-        /* Gerarchia Tipografica */
-        .overlay-content h3 { font-size: var(--ui-font); margin-bottom: 30px; font-weight: 500; letter-spacing: 0.1em; }
-        .overlay-content p { font-size: 16px; line-height: 1.6; text-transform: none; color: #333; margin-bottom: 25px;}
+        .overlay-content { width: 100%; max-width: 600px; }
+        .overlay-content h3 { font-size: var(--ui-font); margin-bottom: 30px; letter-spacing: 0.1em; }
+        .overlay-content p { font-size: 16px; line-height: 1.6; text-transform: none; color: #333; margin-bottom: 25px; }
 
-        /* Form di Contatto Grande */
         .contact-form { display: flex; flex-direction: column; gap: 25px; width: 100%; }
         .contact-form input, .contact-form textarea { 
             background: none; border: none; border-bottom: 1px solid #e0e0e0; 
-            padding: 15px 0; font-family: inherit; font-size: 16px; /* Font più grande */
-            text-transform: none; color: #000;
+            padding: 15px 0; font-family: inherit; font-size: 16px; text-transform: none; color: #000;
         }
-        .contact-form button {
-            align-self: flex-start; margin-top: 35px; border: none; background: none;
-            font-size: var(--ui-font); text-transform: uppercase; font-weight: 500; color: #000;
-        }
-
-        /* --- PROJECT PAGE --- */
-        #projectPage {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
-            background: white; z-index: 140; display: none; overflow-y: auto; 
-            padding: 100px 50px; scrollbar-width: none;
-        }
-        #projectPage::-webkit-scrollbar { display: none; }
-        #projectPage.active { display: block; }
-        .back-btn { position: fixed; top: 25px; right: 25px; font-size: var(--ui-font); font-weight: 500; z-index: 145; }
-        .project-header { font-size: 8vw; font-weight: 400; margin-bottom: 50px; letter-spacing: -0.02em; }
-        .project-layout { display: flex; gap: 50px; }
-        .project-sidebar { width: 30%; font-size: 13px; text-transform: none; line-height: 1.6; color: #666; }
-        .project-main-images { width: 60%; display: flex; flex-direction: column; gap: 30px; }
-        .large-black-rect { width: 100%; height: 80vh; background: black; }
-
-        /* --- BINARIO IMMAGINI --- */
-        #slider-container { position: fixed; top: 0; left: 50%; transform: translateX(-50%); width: 25vw; height: 100vh; z-index: 10; pointer-events: none; transition: opacity 0.5s; }
-        .slider-track { display: flex; flex-direction: column; gap: 20px; will-change: transform; }
-        .img-box { width: 100%; height: 35vh; background-color: black; flex-shrink: 0; pointer-events: auto; }
-
-        /* --- LISTA BACKGROUND --- */
-        .bg-grid { display: flex; justify-content: center; align-items: center; height: 100vh; width: 100%; transition: opacity 0.5s; }
-        .project-list { display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: repeat(6, 1fr); grid-auto-flow: column; width: 85%; gap: 0 15vw; list-style: none; }
-        .project-item { height: 10vh; display: flex; align-items: center; font-size: var(--ui-font); opacity: 0.15; transition: opacity 0.3s; }
-        .project-item:hover { opacity: 1; }
-        .project-list li:nth-child(n+7) { justify-content: flex-end; }
     </style>
 </head>
 <body>
@@ -86,33 +108,49 @@
     <div id="custom-cursor"></div>
 
     <header>
-        <a href="javascript:location.reload()" class="nav-link growable">Carla De Gennaro</a>
-        <button class="nav-link growable" id="aboutBtn">About</button>
+        <a href="javascript:location.reload()" class="nav-link">Carla De Gennaro</a>
+        <div class="nav-group">
+            <button class="nav-link" id="contactBtn">Contact</button>
+            <button class="nav-link" id="aboutBtn">About</button>
+        </div>
     </header>
 
-    <div id="projectPage">
-        <button class="nav-link growable back-btn" onclick="closeProject()">Back —</button>
-        <div class="project-header" id="p-title">Project Name</div>
-        <div class="project-layout">
-            <div class="project-sidebar">
-                <p id="p-desc">Dettagli del progetto selezionato. Lo stile è ispirato alla pulizia formale e al minimalismo editoriale.</p>
-                <br>
-                <p>© 2026 CARLA DE GENNARO</p>
-            </div>
-            <div class="project-main-images">
-                <div class="large-black-rect growable"></div>
-                <div class="large-black-rect growable"></div>
-            </div>
-        </div>
-    </div>
+    <div id="canvas-container"></div>
+
+    <section id="gallery-section">
+        <a href="https://carladegennaro.github.io/carladegennaro_portfolio/Giorno_2/es4/index.html" target="_blank" class="product-item" style="grid-column: 1;">
+            <div class="img-box"><img src="Screenshot 2026-02-05 alle 10.23.04.png" alt="Progetto 1"></div>
+            <div class="product-footer"><span>(01)</span><span>wave</span></div>
+        </a>
+        
+        <a href="https://carladegennaro.github.io/carladegennaro_portfolio/Giorno_2/es5/index.html" target="_blank" class="product-item" style="grid-column: 3;">
+            <div class="img-box"><img src="Screenshot 2026-02-05 alle 10.23.13.png" alt="Progetto 2"></div>
+            <div class="product-footer"><span>(02)</span><span>glitch</span></div>
+        </a>
+        
+        <a href="https://carladegennaro.github.io/carladegennaro_portfolio/Giorno_2/es6/index.html" target="_blank" class="product-item" style="grid-column: 5;">
+            <div class="img-box"><img src="Screenshot 2026-02-05 alle 10.24.12.png" alt="Progetto 3"></div>
+            <div class="product-footer"><span>(03)</span><span>cat</span></div>
+        </a>
+        
+        <a href="https://carladegennaro.github.io/carladegennaro_portfolio/Giorno_3/es_3/index.html" target="_blank" class="product-item" style="grid-column: 2;">
+            <div class="img-box"><img src="Screenshot 2026-02-05 alle 10.23.28.png" alt="Progetto 4"></div>
+            <div class="product-footer"><span>(04)</span><span>type</span></div>
+        </a>
+        
+        <a href="https://carladegennaro.github.io/carladegennaro_portfolio/Giorno_4/es2/index.html" target="_blank" class="product-item" style="grid-column: 4;">
+            <div class="img-box"><img src="Screenshot 2026-02-06 alle 11.25.23.png" alt="Progetto 5"></div>
+            <div class="product-footer"><span>(05)</span><span>Crossword</span></div>
+        </a>
+    </section>
 
     <div id="aboutOverlay" class="overlay">
         <div class="overlay-content">
-            <h3>Designer & Coder</h3>
-            <p>Carla De Gennaro crea esperienze digitali minimaliste. Specializzata in front-end e interactive design.</p>
+            <h3>About me</h3>
+            <p>I'm a student of visual communication at SUPSI in Mendrisio (CH).</p>
             <div style="display: flex; gap: 30px; margin-top: 20px;">
-                <a href="mailto:carladegennaro4@gmail.com" class="nav-link growable" style="margin:0; text-transform: none; font-size: 16px;">carladegennaro4@gmail.com</a>
-                <a href="https://instagram.com/tuoprofilo" target="_blank" class="nav-link growable" style="margin:0; font-size: 16px;">Instagram</a>
+                <a href="mailto:carladegennaro4@gmail.com" class="nav-link" style="text-transform: none; font-size: 16px;">carladegennaro4@gmail.com</a>
+                <a href="https://www.instagram.com/carla.degennaro/" target="_blank" class="nav-link" style="font-size: 16px;">Instagram</a>
             </div>
         </div>
     </div>
@@ -121,122 +159,149 @@
         <div class="overlay-content">
             <h3>Get in touch</h3>
             <form class="contact-form">
-                <input type="text" placeholder="Nome" class="growable">
-                <input type="email" placeholder="Email" class="growable">
-                <input type="tel" placeholder="Telefono" class="growable">
-                <textarea placeholder="Messaggio" rows="3" class="growable"></textarea>
-                <button type="submit" class="growable">Invia —</button>
+                <input type="text" placeholder="Name">
+                <input type="email" placeholder="Email">
+                <textarea placeholder="Message" rows="3"></textarea>
+                <button type="submit" class="nav-link" style="margin-top: 35px; font-size: 11px;">Send —</button>
             </form>
         </div>
     </div>
 
-    <div id="slider-container">
-        <div class="slider-track" id="track">
-            <div class="img-box growable" onclick="openProject('Jean Khamkwan')"></div>
-            <div class="img-box growable" onclick="openProject('Pierre Cathala')"></div>
-            <div class="img-box growable" onclick="openProject('ARD')"></div>
-            <div class="img-box growable" onclick="openProject('Yeng')"></div>
-            <div class="img-box growable" onclick="openProject('Prada Beauty')"></div>
-            <div class="img-box growable" onclick="openProject('Zhong Lin')"></div>
-        </div>
-    </div>
-
-    <section class="bg-grid" id="homeGrid">
-        <ul class="project-list">
-            <li class="project-item growable" onclick="openProject('Jean Khamkwan')"><span>01/</span><span>Jean khamkwan</span></li>
-            <li class="project-item growable" onclick="openProject('Pierre Cathala')"><span>02/</span><span>Pierre Cathala</span></li>
-            <li class="project-item growable" onclick="openProject('ARD')"><span>03/</span><span>ARD</span></li>
-            <li class="project-item growable" onclick="openProject('Yeng')"><span>04/</span><span>Yeng</span></li>
-            <li class="project-item growable" onclick="openProject('Prada Beauty')"><span>05/</span><span>Prada Beauty</span></li>
-            <li class="project-item growable" onclick="openProject('Zhong Lin')"><span>06/</span><span>Zhong Lin</span></li>
-            <li class="project-item growable" onclick="openProject('Michael Bardou')"><span>Michael Bardou</span><span>/07</span></li>
-            <li class="project-item growable" onclick="openProject('Elie Leber')"><span>Elie Leber</span><span>/08</span></li>
-            <li class="project-item growable" onclick="openProject('Aishy')"><span>Aishy</span><span>/09</span></li>
-            <li class="project-item growable" onclick="openProject('Folio Template')"><span>Folio Template</span><span>/10</span></li>
-            <li class="project-item growable" onclick="openProject('Grissini')"><span>Grissini</span><span>/11</span></li>
-            <li class="project-item growable" onclick="openProject('Rue Saint Abel')"><span>Rue Saint Abel</span><span>/12</span></li>
-        </ul>
-    </section>
-
-    <footer>
-        <button class="nav-link growable" id="contactBtn">Contact</button>
-    </footer>
-
     <script>
         const cursor = document.getElementById('custom-cursor');
-        const track = document.getElementById('track');
-        const projectPage = document.getElementById('projectPage');
-        const homeGrid = document.getElementById('homeGrid');
-        const sliderContainer = document.getElementById('slider-container');
-        
-        // --- CURSORE ISTANTANEO ---
+        const canvasContainer = document.getElementById('canvas-container');
+
         document.addEventListener('mousemove', (e) => {
             cursor.style.left = e.clientX + 'px';
             cursor.style.top = e.clientY + 'px';
         });
 
-        function updateHandlers() {
-            document.querySelectorAll('.growable, a, button, input, textarea').forEach(el => {
-                el.addEventListener('mouseenter', () => { cursor.style.width = '40px'; cursor.style.height = '40px'; });
-                el.addEventListener('mouseleave', () => { cursor.style.width = '10px'; cursor.style.height = '10px'; });
+        const projects = document.querySelectorAll('.product-item');
+        projects.forEach(el => {
+            el.addEventListener('mouseenter', () => {
+                cursor.classList.add('grow');
+                // Dissolvenza animazione p5 quando si passa sopra un'immagine
             });
-        }
-        updateHandlers();
+            el.addEventListener('mouseleave', () => {
+                cursor.classList.remove('grow');
+                // Ripristina animazione (se non si è scrollato troppo)
+                if(window.scrollY < 300) {
+                    canvasContainer.style.opacity = 1 - Math.min(window.scrollY / 300, 1);
+                }
+            });
+        });
 
-        // --- GESTIONE PROJECT PAGE ---
-        function openProject(name) {
-            document.getElementById('p-title').innerText = name;
-            projectPage.style.display = 'block';
-            homeGrid.style.opacity = '0';
-            sliderContainer.style.opacity = '0';
-            setTimeout(() => { projectPage.classList.add('active'); projectPage.scrollTo(0, 0); }, 10);
+        // Gestione altri elementi cliccabili
+        const buttons = document.querySelectorAll('button, header .nav-link');
+        buttons.forEach(el => {
+            el.addEventListener('mouseenter', () => cursor.classList.add('grow'));
+            el.addEventListener('mouseleave', () => cursor.classList.remove('grow'));
+        });
+        
+
+        window.addEventListener('scroll', () => {
+            let scrollY = window.scrollY;
+            let blurValue = Math.min(scrollY / 15, 25); 
+            canvasContainer.style.filter = `blur(${blurValue}px)`;
+            
+            // L'opacità cambia solo se non siamo sopra un'immagine
+            const isHovering = document.querySelector('.product-item:hover');
+            if (!isHovering) {
+                let opacityValue = 1 - Math.min(scrollY / 300, 1);
+                canvasContainer.style.opacity = opacityValue;
+            }
+        });
+
+        let particles = [];
+        let targets = [];
+        const fontSize = 110; 
+        const threshold = 300; 
+
+        function setup() {
+            let cnv = createCanvas(windowWidth, windowHeight);
+            cnv.parent('canvas-container');
+            pixelDensity(1); 
+            let pg = createGraphics(width, height);
+            pg.pixelDensity(1);
+            pg.background(255);
+            pg.fill(0);
+            pg.textFont('Courier New');
+            pg.textStyle(BOLD);
+            pg.textSize(fontSize);
+            pg.textAlign(CENTER, CENTER);
+            let centerY = height / 4; 
+            pg.text("PLAYING WITH", width / 2, centerY - 60);
+            pg.text("CODE", width / 2, centerY + 60);
+            let gap = 4; 
+            pg.loadPixels();
+            for (let y = 0; y < pg.height; y += gap) {
+                for (let x = 0; x < pg.width; x += gap) {
+                    let index = (x + y * pg.width) * 4;
+                    if (pg.pixels[index] < 128) {
+                        targets.push(createVector(x + random(-2, 2), y + random(-2, 2)));
+                    }
+                }
+            }
+            for (let i = 0; i < targets.length; i++) {
+                particles.push(new Particle(targets[i]));
+            }
         }
 
-        function closeProject() {
-            projectPage.classList.remove('active');
-            homeGrid.style.opacity = '1';
-            sliderContainer.style.opacity = '1';
-            setTimeout(() => projectPage.style.display = 'none', 300);
+        function draw() {
+            clear();
+            let centerText = createVector(width / 2, height / 4);
+            let mousePos = createVector(mouseX, mouseY);
+            let assemble = (mouseY > height / 2) || (window.scrollY > 50) || (mousePos.dist(centerText) < threshold);
+            if (mouseY > height / 2 || window.scrollY > 50) mousePos = centerText;
+            for (let p of particles) {
+                p.update(assemble, mousePos);
+                p.show();
+            }
         }
 
-        // --- GESTIONE OVERLAYS ---
-        function setupOverlay(btnId, overlayId, otherOverlayId) {
+        class Particle {
+            constructor(target) {
+                this.target = target;
+                this.pos = createVector(random(width), random(height));
+                this.vel = p5.Vector.random2D().mult(random(2, 5));
+                this.acc = createVector();
+                this.maxSpeed = 15;
+                this.maxForce = 1.2;
+                this.size = random(2, 5); 
+            }
+            update(assemble, mPos) {
+                if (assemble && this.target) {
+                    let steer = p5.Vector.sub(this.target, this.pos);
+                    let d = steer.mag();
+                    let speed = this.maxSpeed;
+                    if (d < 100) speed = map(d, 0, 100, 0, this.maxSpeed);
+                    steer.setMag(speed);
+                    let force = p5.Vector.sub(steer, this.vel);
+                    force.limit(this.maxForce);
+                    this.acc.add(force);
+                } else {
+                    this.acc.add(p5.Vector.random2D().mult(0.5));
+                }
+                this.vel.add(this.acc);
+                this.pos.add(this.vel);
+                this.acc.mult(0);
+                this.vel.limit(assemble ? 18 : 3);
+            }
+            show() { fill(0); noStroke(); ellipse(this.pos.x, this.pos.y, this.size); }
+        }
+
+        function setupOverlay(btnId, overlayId, otherId) {
             const btn = document.getElementById(btnId);
             const overlay = document.getElementById(overlayId);
-            const otherOverlay = document.getElementById(otherOverlayId);
+            const other = document.getElementById(otherId);
             btn.addEventListener('click', () => {
-                otherOverlay.classList.remove('active');
+                if (other.classList.contains('active')) other.classList.remove('active');
                 overlay.classList.toggle('active');
             });
         }
         setupOverlay('aboutBtn', 'aboutOverlay', 'contactOverlay');
         setupOverlay('contactBtn', 'contactOverlay', 'aboutOverlay');
-
-        // --- SCROLL INFINITO FLUIDO ---
-        let currentY = 0, targetY = 0, isScrolling = false, autoSpeed = 0.8;
-        const originalContent = track.innerHTML;
-        track.innerHTML = originalContent + originalContent + originalContent;
-        const itemHeight = track.scrollHeight / 3;
-
-        window.addEventListener('wheel', (e) => {
-            if(projectPage.classList.contains('active')) return;
-            targetY += e.deltaY * 0.5;
-            isScrolling = true;
-            clearTimeout(window.scrollTimeout);
-            window.scrollTimeout = setTimeout(() => { isScrolling = false; }, 1000);
-        }, { passive: true });
-
-        function animate() {
-            if (!projectPage.classList.contains('active')) {
-                if (!isScrolling) targetY += autoSpeed;
-                currentY += (targetY - currentY) * 0.1;
-                if (currentY >= itemHeight * 2) { currentY -= itemHeight; targetY -= itemHeight; }
-                else if (currentY <= 0) { currentY += itemHeight; targetY += itemHeight; }
-                track.style.transform = `translateY(${-currentY}px)`;
-            }
-            requestAnimationFrame(animate);
-        }
-        animate();
+        function windowResized() { resizeCanvas(windowWidth, windowHeight); }
     </script>
 </body>
 </html>
