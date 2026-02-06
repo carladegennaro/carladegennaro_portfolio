@@ -120,17 +120,17 @@
     <section id="gallery-section">
         <a href="https://carladegennaro.github.io/carladegennaro_portfolio/Giorno_2/es4/index.html" target="_blank" class="product-item" style="grid-column: 1;">
             <div class="img-box"><img src="Screenshot 2026-02-05 alle 10.23.04.png" alt="Progetto 1"></div>
-            <div class="product-footer"><span>(01)</span><span>face</span></div>
+            <div class="product-footer"><span>(01)</span><span>wave</span></div>
         </a>
         
         <a href="https://carladegennaro.github.io/carladegennaro_portfolio/Giorno_2/es5/index.html" target="_blank" class="product-item" style="grid-column: 3;">
             <div class="img-box"><img src="Screenshot 2026-02-05 alle 10.23.13.png" alt="Progetto 2"></div>
-            <div class="product-footer"><span>(02)</span><span>face glitch</span></div>
+            <div class="product-footer"><span>(02)</span><span>glitch</span></div>
         </a>
         
         <a href="https://carladegennaro.github.io/carladegennaro_portfolio/Giorno_2/es6/index.html" target="_blank" class="product-item" style="grid-column: 5;">
             <div class="img-box"><img src="Screenshot 2026-02-05 alle 10.24.12.png" alt="Progetto 3"></div>
-            <div class="product-footer"><span>(03)</span><span>3d cat</span></div>
+            <div class="product-footer"><span>(03)</span><span>cat</span></div>
         </a>
         
         <a href="https://carladegennaro.github.io/carladegennaro_portfolio/Giorno_3/es_3/index.html" target="_blank" class="product-item" style="grid-column: 2;">
@@ -159,9 +159,9 @@
         <div class="overlay-content">
             <h3>Get in touch</h3>
             <form class="contact-form">
-                <input type="text" placeholder="Nome">
+                <input type="text" placeholder="Name">
                 <input type="email" placeholder="Email">
-                <textarea placeholder="Messaggio" rows="3"></textarea>
+                <textarea placeholder="Message" rows="3"></textarea>
                 <button type="submit" class="nav-link" style="margin-top: 35px; font-size: 11px;">Send —</button>
             </form>
         </div>
@@ -181,7 +181,6 @@
             el.addEventListener('mouseenter', () => {
                 cursor.classList.add('grow');
                 // Dissolvenza animazione p5 quando si passa sopra un'immagine
-                canvasContainer.style.opacity = '0';
             });
             el.addEventListener('mouseleave', () => {
                 cursor.classList.remove('grow');
@@ -198,6 +197,7 @@
             el.addEventListener('mouseenter', () => cursor.classList.add('grow'));
             el.addEventListener('mouseleave', () => cursor.classList.remove('grow'));
         });
+        
 
         window.addEventListener('scroll', () => {
             let scrollY = window.scrollY;
