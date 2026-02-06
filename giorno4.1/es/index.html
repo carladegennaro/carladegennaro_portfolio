@@ -2,7 +2,7 @@
 <html lang="it">
 <head>
     <meta charset="UTF-8">
-    <title>Stelle Spinate Rotanti - Analisi Chat</title>
+    <title>Stelle Spinate Rotanti - Top 50 Chat</title>
     <style>
         body, html {
             margin: 0; padding: 0; width: 100%; height: 100%;
@@ -12,21 +12,20 @@
 
         #sky {
             position: relative; width: 100vw; height: 100vh;
-            background: #000; /* SFONDO NERO */
+            background: #000;
         }
 
         .constellation {
             position: absolute; cursor: grab; z-index: 10;
             display: flex; flex-direction: column; align-items: center;
-            transform: translate(-50%, -50%);
+            transform: translate(-50%, -50%); /* CENTRATURA RISPETTO AL CURSORE */
         }
 
         .constellation:active { cursor: grabbing; }
 
-        /* ROTAZIONE DELLE STELLE */
         .star-svg {
-            filter: drop-shadow(0 0 10px rgba(255, 214, 10, 0.8));
-            animation: rotateStar 20s linear infinite; /* GIRANO SU LORO STESSE */
+            filter: drop-shadow(0 0 12px rgba(255, 214, 10, 0.6));
+            animation: rotateStar 20s linear infinite;
             transform-origin: center;
         }
 
@@ -46,28 +45,28 @@
         .dotted-text {
             fill: none;
             stroke: #fff;
-            stroke-width: 1.2;
+            stroke-width: 1.5;
             stroke-dasharray: 2 4;
-            font-size: 55px;
+            font-size: 48px;
             font-weight: 900;
             text-transform: uppercase;
-            letter-spacing: 4px;
+            letter-spacing: 2px;
         }
 
         .details {
-            font-size: 13px; color: #fff;
+            font-size: 12px; color: #fff;
             background: rgba(0, 0, 0, 0.9);
-            padding: 10px 15px; border-radius: 12px;
-            border: 1px solid rgba(255, 214, 10, 0.4);
+            padding: 8px 12px; border-radius: 10px;
+            border: 1px solid rgba(255, 214, 10, 0.3);
             margin-top: 10px; white-space: nowrap;
             pointer-events: none; opacity: 0;
             transition: opacity 0.4s ease;
-            backdrop-filter: blur(6px);
+            backdrop-filter: blur(5px);
             text-align: center;
         }
 
         .constellation:hover .details { opacity: 1; }
-        .details b { color: #ffd60a; font-size: 16px; display: block; margin-bottom: 2px; }
+        .details b { color: #ffd60a; font-size: 14px; display: block; margin-bottom: 2px; }
 
         .bg-star {
             position: absolute; background: white; border-radius: 50%; opacity: 0.3;
@@ -80,11 +79,56 @@
 
 <script>
     const data = [
-        { word: 'Amore', total: 37175, breakdown: "Eti: 36.992 | Altre: <100" },
-        { word: 'Bene', total: 25072, breakdown: "Eti: 14.950 | Anna: 6.053 | Nicole: 3.316" },
-        { word: 'Amo', total: 10744, breakdown: "Eti: 10.528 | Altre: <100" },
-        { word: 'Cosa', total: 10547, breakdown: "Eti: 7.846 | Anna: 1.910 | Nicole: 585" },
-        { word: 'Buona', total: 8110, breakdown: "Eti: 5.708 | Anna: 1.427 | Nicole: 716" }
+        { word: 'Amore', total: 37175, b: "Eti: 36.992" },
+        { word: 'Sticker', total: 35293, b: "Eti: 28.963 | Nicole: 4.934" },
+        { word: 'Audio', total: 33520, b: "Eti: 15.768 | Nicole: 9.756 | Anna: 6.041" },
+        { word: 'Bene', total: 25072, b: "Eti: 14.950 | Anna: 6.053 | Nicole: 3.316" },
+        { word: 'Amo', total: 10744, b: "Eti: 10.528" },
+        { word: 'Cosa', total: 10547, b: "Eti: 7.846 | Anna: 1.910" },
+        { word: 'Image', total: 10481, b: "Eti: 6.337 | Anna: 1.870 | Elena: 1.158" },
+        { word: 'Ora', total: 9333, b: "Eti: 6.003 | Anna: 2.354" },
+        { word: 'Buona', total: 8110, b: "Eti: 5.708 | Anna: 1.427 | Nicole: 716" },
+        { word: 'Okay', total: 7955, b: "Eti: 6.016 | Nicole: 827" },
+        { word: 'Dopo', total: 7725, b: "Eti: 5.887 | Anna: 1.100" },
+        { word: 'Buon', total: 7074, b: "Eti: 6.332" },
+        { word: 'Dai', total: 6902, b: "Eti: 3.930 | Anna: 1.668 | Nicole: 1.007" },
+        { word: 'Fare', total: 6391, b: "Eti: 3.896 | Anna: 1.696" },
+        { word: 'Già', total: 6355, b: "Eti: 3.739 | Nicole: 906" },
+        { word: 'Grazie', total: 5964, b: "Eti: 3.512 | Nicole: 891" },
+        { word: 'Notte', total: 5635, b: "Eti: 3.853 | Anna: 1.163" },
+        { word: 'Vado', total: 5461, b: "Eti: 4.411" },
+        { word: 'Domani', total: 5356, b: "Eti: 3.540 | Anna: 1.016" },
+        { word: 'Boh', total: 4911, b: "Eti: 2.484 | Anna: 1.740" },
+        { word: 'Tanto', total: 4824, b: "Eti: 3.175 | Anna: 1.184" },
+        { word: 'Vuoi', total: 4646, b: "Eti: 3.158 | Anna: 1.068" },
+        { word: 'Ok', total: 4570, b: "Anna: 1.846" },
+        { word: 'Casa', total: 4533, b: "Eti: 3.103 | Anna: 977" },
+        { word: 'Buongiorno', total: 4325, b: "Eti: 3.937" },
+        { word: 'Spero', total: 4174, b: "Eti: 2.676 | Nicole: 391" },
+        { word: 'Ancora', total: 4035, b: "Eti: 2.618 | Anna: 921" },
+        { word: 'Detto', total: 3974, b: "Eti: 2.780" },
+        { word: 'Penso', total: 3926, b: "Eti: 2.703" },
+        { word: 'Appetito', total: 2826, b: "Eti: 2.826" },
+        { word: 'Scusa', total: 2643, b: "Eti: 2.643" },
+        { word: 'Dormire', total: 2617, b: "Eti: 2.617" },
+        { word: 'Vabe', total: 2848, b: "Eti: 2.848" },
+        { word: 'So', total: 2653, b: "Anna: 2.653" },
+        { word: 'Puzzola', total: 1797, b: "Anna: 1.797" },
+        { word: 'Haha', total: 1480, b: "Anna: 1.480" },
+        { word: 'Comunque', total: 1313, b: "Anna: 1.313" },
+        { word: 'Hey', total: 1309, b: "Anna: 1.309" },
+        { word: 'Stai', total: 1299, b: "Anna: 1.299" },
+        { word: 'Tipo', total: 1174, b: "Anna: 1.174" },
+        { word: 'Oggi', total: 1172, b: "Anna: 1.172" },
+        { word: 'Tranquilla', total: 1079, b: "Anna: 1.079" },
+        { word: 'Male', total: 994, b: "Anna: 994" },
+        { word: 'Vidéo', total: 793, b: "Elena: 793" },
+        { word: 'Cazzo', total: 620, b: "Nicole: 620" },
+        { word: 'Top', total: 555, b: "Nicole: 555" },
+        { word: 'Appunto', total: 499, b: "Nicole: 499" },
+        { word: 'Meglio', total: 433, b: "Nicole: 433" },
+        { word: 'Yes', total: 416, b: "Nicole: 416" },
+        { word: 'Esatto', total: 164, b: "Elena: 164" }
     ];
 
     const sky = document.getElementById('sky');
@@ -112,29 +156,27 @@
         sky.appendChild(s);
     }
 
-    data.forEach((item, i) => {
+    data.forEach((item) => {
         const container = document.createElement('div');
         container.className = 'constellation';
-        container.style.left = (15 + (Math.random() * 70)) + '%';
-        container.style.top = (25 + (Math.random() * 55)) + '%';
+        container.style.left = (Math.random() * 80 + 10) + '%';
+        container.style.top = (Math.random() * 70 + 15) + '%';
 
         const scaleFactor = item.total / 37175;
         const outerR = 30 + (60 * scaleFactor);
         const innerR = outerR * 0.25;
 
         const svgNS = "http://www.w3.org/2000/svg";
-        
         const starSvg = document.createElementNS(svgNS, "svg");
         starSvg.setAttribute("width", "200");
         starSvg.setAttribute("height", "200");
         starSvg.setAttribute("class", "star-svg");
-        starSvg.style.animationDuration = (15 + Math.random() * 10) + 's'; // Velocità variabili
         
         const starPath = document.createElementNS(svgNS, "path");
-        starPath.setAttribute("d", createStarPath(24, outerR, innerR));
+        starPath.setAttribute("d", createStarPath(20, outerR, innerR));
         starPath.setAttribute("fill", "#ffd60a");
         starPath.setAttribute("stroke", "#fff");
-        starPath.setAttribute("stroke-width", "1");
+        starPath.setAttribute("stroke-width", "0.5");
         starSvg.appendChild(starPath);
 
         const wordSvg = document.createElementNS(svgNS, "svg");
@@ -156,7 +198,7 @@
         
         const detailDiv = document.createElement('div');
         detailDiv.className = 'details';
-        detailDiv.innerHTML = `<b>${item.word.toUpperCase()}</b>Totale: ${item.total.toLocaleString()}<br><small>${item.breakdown}</small>`;
+        detailDiv.innerHTML = `<b>${item.word.toUpperCase()}</b>Totale: ${item.total.toLocaleString()}<br><small>${item.b}</small>`;
         container.appendChild(detailDiv);
 
         sky.appendChild(container);
@@ -165,29 +207,27 @@
 
     function makeDraggable(el) {
         let isDragging = false;
-        let startX, startY, initialLeft, initialTop;
 
         el.addEventListener('mousedown', (e) => {
             isDragging = true;
-            startX = e.clientX;
-            startY = e.clientY;
-            initialLeft = el.offsetLeft;
-            initialTop = el.offsetTop;
             el.style.zIndex = 1000;
+            updatePosition(e);
         });
 
         document.addEventListener('mousemove', (e) => {
             if (!isDragging) return;
-            const dx = e.clientX - startX;
-            const dy = e.clientY - startY;
-            el.style.left = (initialLeft + dx) + 'px';
-            el.style.top = (initialTop + dy) + 'px';
+            updatePosition(e);
         });
 
         document.addEventListener('mouseup', () => {
             isDragging = false;
             el.style.zIndex = 10;
         });
+
+        function updatePosition(e) {
+            el.style.left = e.clientX + 'px';
+            el.style.top = e.clientY + 'px';
+        }
     }
 </script>
 
