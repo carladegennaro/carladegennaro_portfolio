@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <title>Chat Stats Crossword - Rosa & B/W</title>
+    <style>
+        :root {
+            --rosa: #ffc0cb;
+        }
+        body { 
+            font-family: 'Courier New', Courier, monospace; 
+            display: flex; 
+            margin: 0; 
+            background: #ffffff; 
+            height: 100vh; 
+            overflow: hidden; 
+            color: #000;
+        }
+        
+        #sidebar {
+            width: 280px;
+            background: #fff;
+            padding: 20px;
+            border-right: 2px solid #000;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+        }
+
+        #btn-generate {
+            padding: 15px;
+            background: #000;
+            color: #fff;
+            border: 2px solid #000;
+            cursor: pointer;
+            font-weight: bold;
+            margin-bottom: 20px;
+            border-radius: 0;
+            text-transform: uppercase;
+        }
+        #btn-generate:hover { background: #444; }
+
+        .stat-btn {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            margin-bottom: 8px;
+            background: #fff;
+            border: 1px solid #000;
+            border-radius: 0;
+            cursor: pointer;
+        }
+        .stat-btn:hover { background: var(--rosa); }
+        
+        #main { flex-grow: 1; display: flex; justify-content: center; align-items: center; padding: 20px; }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(12, 50px);
+            grid-template-rows: repeat(12, 50px);
+            background: #000;
+            border: 2px solid #000;
+        }
+
+        .cell {
+            width: 50px;
+            height: 50px;
+            border: 1px solid #000;
+            box-sizing: border-box;
+            position: relative;
+            background: #fff;
+        }
+
+        .cell.def {
+            background-color: #fff;
+            font-size: 8px;
+            padding: 3px;
+            line-height: 1.1;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            font-weight: bold;
+        }
+        .cell.def .arrow { font-size: 12px; align-self: flex-end; }
+
+        .cell input {
+            width: 100%;
+            height: 100%;
+            border: none;
+            text-align: center;
+            font-size: 22px;
+            text-transform: uppercase;
+            font-weight: bold;
+            background: transparent;
+            outline: none;
+        }
+
+        .cell.empty { background: #000; }
+
+        /* Colore Rosa per correttezza e selezione */
+        .is-correct { background-color: var(--rosa) !important; }
+        .highlight-hint { background-color: var(--rosa) !important; }
+        .cell input:focus { background-color: var(--rosa); }
+    </style>
+</head>
+<body>
+
+<div id="sidebar">
+    <button id="btn-generate" onclick="generateNewLayout()">NUOVO SCHEMA</button>
+    <h2 style="font-size: 1rem; border-bottom: 2px solid #000; padding-bottom: 5px;">TOP 7 CHAT</h2>
+    <div id="stats-list"></div>
+</div>
+
+<div id="main">
+    <div class="grid" id="grid"></div>
+</div>
+
+<script>
+    const wordsData = {
+        "OMIS": { c: "68.722", d: "Dato rimosso" },
+        "NON": { c: "55.454", d: "Negazione" },
+        "CHE": { c: "54.300", d: "Congiunzione" },
+        "AMORE": { c: "37.175", d: "Termine dolce" },
+        "STICKER": { c: "35.293", d: "Invio grafico" },
+        "AUDIO": { c: "33.520", d: "Voce registrata" },
+        "CARLA": { c: "33.001", d: "Nome utente" }
+    };
+
+    const layouts = [
+        [
+            { w: "OMIS", r: 1, col: 1, dir: "H" },
+            { w: "AMORE", r: 1, col: 1, dir: "V" },
+            { w: "STICKER", r: 1, col: 4, dir: "V" },
+            { w: "AUDIO", r: 5, col: 1, dir: "H" },
+            { w: "NON", r: 1, col: 7, dir: "V" },
+            { w: "CHE", r: 8, col: 1, dir: "H" },
+            { w: "CARLA", r: 3, col: 10, dir: "V" }
+        ],
+        [
+            { w: "STICKER", r: 1, col: 2, dir: "H" },
+            { w: "AMORE", r: 1, col: 2, dir: "V" },
+            { w: "NON", r: 1, col: 5, dir: "V" },
+            { w: "AUDIO", r: 7, col: 1, dir: "H" },
+            { w: "OMIS", r: 4, col: 7, dir: "V" },
+            { w: "CHE", r: 9, col: 6, dir: "H" },
+            { w: "CARLA", r: 2, col: 10, dir: "V" }
+        ]
+    ];
+
+    let currentLayoutIndex = 0;
+    const GRID_SIZE = 12;
+
+    function drawGrid(layout) {
+        const gridEl = document.getElementById('grid');
+        const statsEl = document.getElementById('stats-list');
+        gridEl.innerHTML = '';
+        statsEl.innerHTML = '';
+
+        let matrix = Array(GRID_SIZE).fill().map(() => Array(GRID_SIZE).fill({type: 'empty'}));
+
+        layout.forEach(item => {
+            const data = wordsData[item.w];
+            let defR = item.dir === 'H' ? item.r : item.r - 1;
+            let defC = item.dir === 'H' ? item.col - 1 : item.col;
+            
+            matrix[defR][defC] = { type: 'def', text: data.d, arrow: item.dir === 'H' ? '→' : '↓', word: item.w };
+
+            for(let i=0; i < item.w.length; i++) {
+                let r = item.dir === 'H' ? item.r : item.r + i;
+                let c = item.dir === 'H' ? item.col + i : item.col;
+                if (matrix[r][c].type === 'input') {
+                    matrix[r][c].words.push(item.w);
+                } else {
+                    matrix[r][c] = { type: 'input', letter: item.w[i], words: [item.w] };
+                }
+            }
+
+            const btn = document.createElement('div');
+            btn.className = 'stat-btn';
+            btn.innerHTML = `<span>${data.c}</span> <b>${item.w.length}L</b>`;
+            btn.onclick = () => highlightWord(item.w);
+            statsEl.appendChild(btn);
+        });
+
+        for(let r=0; r<GRID_SIZE; r++) {
+            for(let c=0; c<GRID_SIZE; c++) {
+                const cell = matrix[r][c];
+                const div = document.createElement('div');
+                div.className = 'cell ' + cell.type;
+                if(cell.type === 'def') {
+                    div.innerHTML = `<span>${cell.text}</span><span class="arrow">${cell.arrow}</span>`;
+                } else if(cell.type === 'input') {
+                    const input = document.createElement('input');
+                    input.maxLength = 1;
+                    input.dataset.letter = cell.letter;
+                    input.dataset.belongsto = JSON.stringify(cell.words);
+                    input.addEventListener('keydown', (e) => {
+                        if (e.key === 'Enter') cell.words.forEach(w => checkWord(w));
+                    });
+                    div.appendChild(input);
+                }
+                gridEl.appendChild(div);
+            }
+        }
+    }
+
+    function checkWord(wordID) {
+        const inputs = Array.from(document.querySelectorAll('input')).filter(i => JSON.parse(i.dataset.belongsto).includes(wordID));
+        if (inputs.every(i => i.value.toUpperCase() === i.dataset.letter)) {
+            inputs.forEach(i => i.parentElement.classList.add('is-correct'));
+        }
+    }
+
+    function highlightWord(wordID) {
+        document.querySelectorAll('.cell').forEach(c => c.classList.remove('highlight-hint'));
+        document.querySelectorAll('input').forEach(i => {
+            if (JSON.parse(i.dataset.belongsto).includes(wordID)) {
+                i.parentElement.classList.add('highlight-hint');
+                if(!i.value) i.focus();
+            }
+        });
+    }
+
+    function generateNewLayout() {
+        currentLayoutIndex = (currentLayoutIndex + 1) % layouts.length;
+        drawGrid(layouts[currentLayoutIndex]);
+    }
+
+    drawGrid(layouts[0]);
+</script>
+</body>
+</html>
